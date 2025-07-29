@@ -6,13 +6,13 @@ tokenizer = AutoTokenizer.from_pretrained("j-hartmann/emotion-english-distilrobe
 model = AutoModelForSequenceClassification.from_pretrained("j-hartmann/emotion-english-distilroberta-base")
 
 emotion_to_emojis = {
-    "joy": ["🙂", "😄", "😁"],
-    "sadness": ["😔", "😢", "😭"],
-    "anger": ["😠", "😡", "🤬"],
-    "fear": ["😰", "😨", "😱"],
-    "surprise": ["😯", "😲", "😳"],
-    "disgust": ["🤨", "🤢", "🤮"],
-    "neutral": ["😐", "😑", "😶"]
+    "joy": ["😊", "😄", "😆"],
+    "sadness": ["😞", "😢", "😭"],
+    "anger": ["😡", "😠", "😤"],
+    "fear": ["😨", "😰", "😱"],
+    "surprise": ["😲", "😳", "😮"],
+    "disgust": ["🤢", "🤮", "😒"],
+    "neutral": ["😐", "😶", "😑"]
 }
 
 def get_emotion_and_score(text):
@@ -24,11 +24,18 @@ def get_emotion_and_score(text):
     score = probs[predicted_idx].item()
     return label, score
 
-def choose_emoji(emotion, score):
+def choose_emoji(emotion, score, guild_id=None, client=None):
+    if guild_id is not None and client and hasattr(client, "guild_emoji_settings"):
+        guild_emojis = client.guild_emoji_settings.get(str(guild_id), {})
+        emojis = guild_emojis.get(emotion, emotion_to_emojis.get(emotion, ["❓"]))
+    else:
+        emojis = emotion_to_emojis.get(emotion, ["❓"])
+
     if score < 0.6:
         idx = 0
     elif score < 0.85:
         idx = 1
     else:
         idx = 2
-    return emotion_to_emojis.get(emotion, ["❓"])[idx]
+
+    return emojis[idx]
