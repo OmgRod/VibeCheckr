@@ -1,5 +1,5 @@
 from discord import app_commands, Interaction
-from settings import save_settings
+from src.settings import save_settings
 
 def toggle_reactions(client):
     @app_commands.command(name="togglereactions", description="Toggle automatic emotion reactions on or off for yourself")

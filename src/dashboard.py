@@ -1,25 +1,27 @@
 from rich.live import Live
 from rich.table import Table
-from rich.console import Group
+from rich.console import Group, Console
 from rich.panel import Panel
 from rich.progress import Progress, BarColumn, TextColumn
 from rich.align import Align
 from rich import box
 import time
 from threading import Thread
-from metrics import get_metrics
+from src.metrics import get_metrics
 
+console = Console()
 
 def start_dashboard():
     Thread(target=run_dashboard, daemon=True).start()
 
-
 def run_dashboard():
-    with Live(render_dashboard(), refresh_per_second=1, screen=True) as live:
-        while True:
-            time.sleep(1)
-            live.update(render_dashboard())
-
+    try:
+        with Live(render_dashboard(), refresh_per_second=1, screen=True) as live:
+            while True:
+                time.sleep(1)
+                live.update(render_dashboard())
+    finally:
+        console.show_cursor()
 
 def render_dashboard():
     metrics = get_metrics()

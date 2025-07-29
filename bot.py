@@ -1,8 +1,8 @@
 import os
 import asyncio
 from dotenv import load_dotenv
-from client import MyClient
-from dashboard import start_dashboard
+from src.client import MyClient
+from src.dashboard import start_dashboard
 
 load_dotenv()
 

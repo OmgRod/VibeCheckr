@@ -1,9 +1,9 @@
 import discord
 from discord import app_commands
-from settings import load_settings, save_settings
-from emotion import get_emotion_and_score, choose_emoji
-from commands import toggle_reactions
-from metrics import register_message
+from src.settings import load_settings, save_settings
+from src.emotion import get_emotion_and_score, choose_emoji
+from src.commands import toggle_reactions
+from src.metrics import register_message
 
 intents = discord.Intents.default()
 intents.message_content = True
