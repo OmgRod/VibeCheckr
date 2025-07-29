@@ -3,11 +3,24 @@ from discord import app_commands
 import asyncio
 from dotenv import load_dotenv
 import os
+import json
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import torch
 from torch.nn.functional import softmax
 
 load_dotenv()
+
+SETTINGS_FILE = "reaction_settings.json"
+
+def load_settings():
+    if os.path.exists(SETTINGS_FILE):
+        with open(SETTINGS_FILE, "r") as f:
+            return json.load(f)
+    return {}
+
+def save_settings(settings):
+    with open(SETTINGS_FILE, "w") as f:
+        json.dump(settings, f)
 
 tokenizer = AutoTokenizer.from_pretrained("j-hartmann/emotion-english-distilroberta-base")
 model = AutoModelForSequenceClassification.from_pretrained("j-hartmann/emotion-english-distilroberta-base")
@@ -47,7 +60,7 @@ class MyClient(discord.Client):
     def __init__(self):
         super().__init__(intents=intents)
         self.tree = app_commands.CommandTree(self)
-        self.user_reaction_settings = {}
+        self.user_reaction_settings = load_settings()
 
     async def setup_hook(self):
         self.tree.add_command(toggle_reactions)
@@ -65,7 +78,7 @@ async def on_message(message):
     if message.author.bot:
         return
 
-    if not client.user_reaction_settings.get(message.author.id, False):
+    if not client.user_reaction_settings.get(str(message.author.id), False):
         return
 
     emotion, score = get_emotion_and_score(message.content.lower())
@@ -78,8 +91,10 @@ async def on_message(message):
 
 @app_commands.command(name="togglereactions", description="Toggle automatic emotion reactions on or off for yourself")
 async def toggle_reactions(interaction: discord.Interaction):
-    current = client.user_reaction_settings.get(interaction.user.id, False)
-    client.user_reaction_settings[interaction.user.id] = not current
+    user_id = str(interaction.user.id)
+    current = client.user_reaction_settings.get(user_id, False)
+    client.user_reaction_settings[user_id] = not current
+    save_settings(client.user_reaction_settings)
     status = "enabled" if not current else "disabled"
     await interaction.response.send_message(f"Your emotion reactions are now {status}.", ephemeral=True)
 

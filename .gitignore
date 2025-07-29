@@ -201,3 +201,5 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+reaction_settings.json
