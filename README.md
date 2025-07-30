@@ -30,7 +30,7 @@ A powerful Discord bot that checks the vibe using transformer-based models. Buil
 3. Create a `.env` file with your bot token:
 
     ```bash
-    DISCORD_TOKEN=your_token_here
+    BOT_TOKEN=your_token_here
     ```
 
 4. Run the bot:
