@@ -34,7 +34,7 @@ rich==14.2.0
 safetensors==0.7.0
 sympy==1.14.0
 tokenizers==0.22.2
-torch==2.9.1
+torch==2.10.0
 tqdm==4.67.1
 transformers==4.57.5
 typing_extensions==4.15.0
